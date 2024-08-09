@@ -15,10 +15,14 @@ whatsappClient.on("message", async(msg) =>{
             const chat = await msg.getChat();
             const chatid = chat.lastMessage.id._serialized;
             if(msg.body === "hola"){
-                msg.reply("hola, soy lucila, mucho gusto!")
+                msg.reply("Hola, soy lucila, mucho gusto!")
             }
-            if(msg.body === "soy yuco"){
-                msg.reply("sos un boludo")
+            else if(msg.body === "necesito ayuda"){
+                msg.reply("Todavía no me programaron por completo, pero en breve podré ayudarte!")
+            }
+            else
+            {
+                msg.reply("Esa opcion no la conozco")
             }
         }
     } catch (error) {
