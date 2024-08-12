@@ -1,0 +1,1 @@
+export const CHAT_TIMEOUT_MS = 180000;

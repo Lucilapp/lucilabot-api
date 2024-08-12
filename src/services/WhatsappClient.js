@@ -1,6 +1,6 @@
 const { Client, LocalAuth } = require("whatsapp-web.js")
 const qrcode = require("qrcode-terminal")
-
+import InitializationService from "./initialization-service"
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })

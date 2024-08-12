@@ -1,1 +1,0 @@
-//conexion con la bd
