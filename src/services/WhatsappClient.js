@@ -13,7 +13,7 @@ whatsappClient.on("message", async(msg) =>{
         if(msg.from != 'status@broadcast'){
             const contact = await msg.getContact();
             const chat = await msg.getChat();
-            const chatid = chat.lastMessage.id._serialized;
+            const chatid = chat.lastMessage.id._serialized; 
             if(msg.body === "hola"){
                 msg.reply("Hola, soy lucila, mucho gusto!")
             }
