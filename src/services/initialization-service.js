@@ -1,3 +1,4 @@
+import { ID_MENSAJE_REGISTRO } from "../config/constants";
 import ControlService from "./control-service";
 
 export default class InitializationService {
@@ -16,7 +17,7 @@ export default class InitializationService {
 
             }
             else {
-                // reply = getMessage(Constante de mensaje de timeout)
+                reply = getMessage(ID_MENSAJE_REGISTRO)
             }
 
         }
