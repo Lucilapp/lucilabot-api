@@ -1,4 +1,4 @@
-import MessageRepository from "../repositories/message-repository"
+import MessageRepository from "../repositories/message-repository.js"
 
 export default class MessageService {
     getMessageById = async (messageID) => {
