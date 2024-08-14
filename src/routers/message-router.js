@@ -1,7 +1,7 @@
 
-const express = require('express');
+import express from 'express';
+import whatsappClient from '../services/WhatsappClient.js';
 const router = new express.Router();
-const whatsappClient = require("../services/WhatsappClient");
 
 router.get('/', (req, res) => {
   res.send('Hello World!');
@@ -12,4 +12,4 @@ router.post("/message", (req, res) => {
   res.send();
 })
 
-module.exports = router
+export default router

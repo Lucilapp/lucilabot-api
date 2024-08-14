@@ -1,6 +1,7 @@
-const { Client, LocalAuth } = require("whatsapp-web.js")
-const qrcode = require("qrcode-terminal")
-import InitializationService from "./initialization-service"
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
+import qrcode from 'qrcode-terminal';
+import InitializationService from './initialization-service.js';
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
@@ -18,11 +19,7 @@ whatsappClient.on("message", async(msg) =>{
                 msg.reply("Hola, soy lucila, mucho gusto!")
             }
             else if(msg.body === "necesito ayuda"){
-                msg.reply("Todavía no me programaron por completo, pero en breve podré ayudarte!")
-            }
-            else
-            {
-                msg.reply("Esa opcion no la conozco")
+                chat.sendMessage("Funciona");
             }
         }
     } catch (error) {
@@ -30,4 +27,4 @@ whatsappClient.on("message", async(msg) =>{
     }
 })
 
-module.exports = whatsappClient
+export default whatsappClient;
