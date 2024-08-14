@@ -7,7 +7,7 @@ class Message {
      * @param {boolean} replyable - ? Si este mensaje espera una respuesta {A, B, C, D}  
      */
     constructor(ID, text, dbInput, replyable) {
-        this.ID = id;
+        this.ID = ID;
         this.text = text;
         this.dbInput = dbInput;
         this.replyable = replyable;

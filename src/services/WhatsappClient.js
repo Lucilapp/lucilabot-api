@@ -2,6 +2,7 @@ import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import InitializationService from './initialization-service.js';
+import MessageService from './message-service.js';
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
@@ -15,7 +16,13 @@ whatsappClient.on("message", async(msg) =>{
             const contact = await msg.getContact();
             const chat = await msg.getChat();
             const init = new InitializationService();
-            let reply = init.initialize()
+            const msgsvc = new MessageService();
+            let reply = init.checkChat(contact.number);
+            //se tiene que fijar si tiene que guardar la respuesta
+            if((await msgsvc.getMessageById(reply.chat.laststep)).replyable){
+                
+            }
+            //tiene que mandar el siguente mensaje
             
         }
     } catch (error) {

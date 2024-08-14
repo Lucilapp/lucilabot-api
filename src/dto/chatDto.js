@@ -8,6 +8,6 @@ class Chat {
     constructor(phoneNumber, startingTime) {
         this.number = phoneNumber;
         this.startingTime = startingTime;
-        this.lastStep = 0;
+        this.lastStep = -1;
     }
 }
