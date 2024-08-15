@@ -1,4 +1,4 @@
-import { Message } from "./messageDto";
+import { Message } from "./messageDto.js";
 
 export class Chat {
     /**

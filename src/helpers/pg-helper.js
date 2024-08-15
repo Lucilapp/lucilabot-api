@@ -27,6 +27,7 @@ export default class PgHelper {
     }
     
     async sqlQuery(query, values = []) {
+        console.log(`se manda la query: ${query}`)
         const client = await this.pool.connect();
         try {
             const res = await client.query(query, values);

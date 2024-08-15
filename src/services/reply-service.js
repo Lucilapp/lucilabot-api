@@ -4,6 +4,7 @@ import { Chat } from "../dto/chatDto.js";
 import AccountService from "./account-service.js";
 import ControlService from  "./control-service.js";
 import MessageService from "./message-service.js";
+import ChatService from "./chat-service.js";
 
 export default class ReplyService {
     initialize = async (phoneNumber) => {
@@ -42,19 +43,19 @@ export default class ReplyService {
     }
 
     checkChat = async (phoneNumber, clientReply) => {
-        const chats = getChatsByPhoneNumber(phoneNumber);
+        const chats = await getChatsByPhoneNumber(phoneNumber);
         const control = new ControlService();
         let reply = {
             message: null,
             chat: null
         };
-        //Si hay mas de un chat al mismo tiempo con ese numero, error interno
-        if(chats.length > 1){
-            reply.message = control.internalError();
-        }
         //Si no hay ningun chat inicia uno nuevo
-        else if (chats.length === 0){
+        if (chats === null){
             reply.message = this.newChat(phoneNumber);
+        }
+        //Si hay mas de un chat al mismo tiempo con ese numero, error interno
+        else if(chats.length > 1){
+            reply.message = control.internalError();
         }
         else{
             reply.chat = chats[0];
@@ -65,7 +66,10 @@ export default class ReplyService {
 
     newChat = async (phoneNumber) => {
         const chat = new Chat(phoneNumber, Date.now(), null);
+        console.log(`chat que va a montar ${chat}`)
         addChatToArray(chat);
+        const chatsvc = new ChatService();
+        console.log(`chat como se monto ${chatsvc.getChatArray()}`)
         let reply = this.initialize(phoneNumber);
         return reply;
     }

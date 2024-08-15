@@ -3,6 +3,6 @@ import PgHelper from "../helpers/pg-helper.js";
 export default class AccountRepository {
     getAccount = async (phoneNumber) => {
         const pgHelper = new PgHelper();
-        return await pgHelper.sqlQuery(/*Un query que busque la cuenta por el numero de telefono*/);
+        return await pgHelper.sqlQuery(`Select * from "Cliente" where "Telefono" = ${phoneNumber}`);
     }
 }

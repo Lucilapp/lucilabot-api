@@ -22,11 +22,12 @@ whatsappClient.on("message", async(msg) =>{
             const replysvc = new ReplyService();
             const msgsvc = new MessageService();
             const chatsvc = new ChatService();
-
+            
             //primero decide el siguente mensaje
             let reply = replysvc.checkChat(contact.number, msg.body);
-
+            console.log(`chat array: ${chatsvc.getChatArray()}`);
             //se tiene que fijar si tiene que guardar la respuesta
+            console.log(`get chat de whatsappclient: ${chatsvc.getChatByPhoneNumber(contact.number)}`);
             let lastMessage = chatsvc.getChatByPhoneNumber(contact.number).lastMessage;
             if(lastMessage !== null && lastMessage.dbInput){
                 //grabar respuesta
