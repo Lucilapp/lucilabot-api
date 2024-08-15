@@ -1,4 +1,4 @@
-import AccountRepository from "../repositories/account-repository"
+import AccountRepository from "../repositories/account-repository.js"
 
 export default class AccountService {
     getAccount = (phoneNumber) => {

@@ -1,11 +1,16 @@
+import { json } from "stream/consumers";
 import { ID_MENSAJE_RESPUESTA_INVALIDA } from "../config/constants.js";
-import MessageRepository from "../repositories/message-repository.js"
+import { Message } from "../dto/messageDto.js";
+import MessageRepository from "../repositories/message-repository.js";
+
 
 export default class MessageService {
     getMessageById = async (messageID) => {
         const repo = new MessageRepository();
-        const message = repo.getMessageByID(messageID);
-        const reply = this.mountMessage(message);
+        const message = await repo.getMessageByID(messageID);
+        console.log(`mensaje como viene de la bd ${JSON.stringify(message)}`);
+        const reply = await this.mountMessage(message);
+        console.log(`el mensaje montado ${JSON.stringify(reply)}`);
         return reply;
     }
 
@@ -29,8 +34,10 @@ export default class MessageService {
         return reply;
     }
 
-    mountMessage = (ID, text, dbInput, replyable) => {
-        let reply = new Message(ID, text, dbInput, replyable);
+    mountMessage = async (message) => {
+        const repo = new MessageRepository();
+        let replyable = (await repo.getMessageOptions(message.Id))[0].Option !== null || message.GuardarRespuesta;
+        let reply = new Message(message.Id, message.Texto, replyable, message.GuardarRespuesta);
         return reply;
     }
 }

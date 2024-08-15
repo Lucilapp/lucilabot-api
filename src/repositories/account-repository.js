@@ -1,4 +1,4 @@
-import PgHelper from "../helpers/pg-helper";
+import PgHelper from "../helpers/pg-helper.js";
 
 export default class AccountRepository {
     getAccount = async (phoneNumber) => {

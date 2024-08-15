@@ -1,6 +1,6 @@
 import pkg from 'pg';
 const { Pool } = pkg;
-import { supabaseConfig } from '../config/config';
+import { supabaseConfig } from '../config/config.js';
 
 export default class PgHelper {
     constructor() {
@@ -25,7 +25,20 @@ export default class PgHelper {
             client.release();
         }
     }
-
+    
+    async sqlQuery(query, values = []) {
+        const client = await this.pool.connect();
+        try {
+            const res = await client.query(query, values);
+            return res.rows;
+        } catch (err) {
+            console.error('Error executing query', err.stack);
+            throw err;
+        } finally {
+            client.release();
+        }
+    }
+    
     async close() {
         await this.pool.end();
     }

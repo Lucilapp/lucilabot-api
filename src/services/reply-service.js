@@ -1,10 +1,11 @@
 import { ID_MENSAJE_INICIO, ID_MENSAJE_REGISTRO, ID_MENSAJE_TIMEOUT } from "../config/constants.js";
 import { addChatToArray, getChatArray, getChatsByPhoneNumber } from "../globals/chatsArray.js";
+import { Chat } from "../dto/chatDto.js";
 import AccountService from "./account-service.js";
 import ControlService from  "./control-service.js";
 import MessageService from "./message-service.js";
 
-export default class InitializationService {
+export default class ReplyService {
     initialize = async (phoneNumber) => {
         //Aca tiene que verificar si es un cliente nuevo o ya esta registrado, y continuar acordemente
         const acc = new AccountService();
@@ -40,7 +41,7 @@ export default class InitializationService {
         return reply;
     }
 
-    checkChat = async (phoneNumber, clientReply, lastMessageID) => {
+    checkChat = async (phoneNumber, clientReply) => {
         const chats = getChatsByPhoneNumber(phoneNumber);
         const control = new ControlService();
         let reply = {
@@ -63,8 +64,9 @@ export default class InitializationService {
     }
 
     newChat = async (phoneNumber) => {
-        const chat = new Chat(phoneNumber, Date.now());
+        const chat = new Chat(phoneNumber, Date.now(), null);
         addChatToArray(chat);
         let reply = this.initialize(phoneNumber);
+        return reply;
     }
 }
