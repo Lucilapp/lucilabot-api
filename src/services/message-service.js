@@ -8,9 +8,7 @@ export default class MessageService {
     getMessageById = async (messageID) => {
         const repo = new MessageRepository();
         const message = await repo.getMessageByID(messageID);
-        console.log(`mensaje como viene de la bd ${JSON.stringify(message)}`);
         const reply = await this.mountMessage(message);
-        console.log(`el mensaje montado ${JSON.stringify(reply)}`);
         return reply;
     }
 

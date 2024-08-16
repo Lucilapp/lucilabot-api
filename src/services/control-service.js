@@ -9,7 +9,7 @@ export default class ControlService {
 
     internalError = async () => {
         const msgsvc = new MessageService();
-        const reply = await msgsvc.getMessageByID(ID_MENSAJE_ERROR_INTERNO)
+        const reply = await msgsvc.getMessageById(ID_MENSAJE_ERROR_INTERNO);
         return reply;
     }
 }

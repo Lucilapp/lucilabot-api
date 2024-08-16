@@ -1,6 +1,4 @@
 import { ID_MENSAJE_INICIO, ID_MENSAJE_REGISTRO, ID_MENSAJE_TIMEOUT } from "../config/constants.js";
-import { addChatToArray, getChatArray, getChatsByPhoneNumber } from "../globals/chatsArray.js";
-import { Chat } from "../dto/chatDto.js";
 import AccountService from "./account-service.js";
 import ControlService from  "./control-service.js";
 import MessageService from "./message-service.js";
@@ -13,11 +11,12 @@ export default class ReplyService {
         const msg = new MessageService();
         let reply;
         if(acc.getAccount(phoneNumber)){
-            reply = msg.getMessageById(ID_MENSAJE_INICIO);
+            reply = await msg.getMessageById(ID_MENSAJE_INICIO);
         }
         else{
-            reply = msg.getMessageById(ID_MENSAJE_REGISTRO);
+            reply = await msg.getMessageById(ID_MENSAJE_REGISTRO);
         }
+        return reply;
     }
 
     continueChat = (chat, clientReply) => {
@@ -43,33 +42,27 @@ export default class ReplyService {
     }
 
     checkChat = async (phoneNumber, clientReply) => {
-        const chats = await getChatsByPhoneNumber(phoneNumber);
+        const chatsvc = new ChatService();
+        const chats = chatsvc.getChatByPhoneNumber(phoneNumber);
         const control = new ControlService();
-        let reply = {
-            message: null,
-            chat: null
-        };
+        let reply = null;
         //Si no hay ningun chat inicia uno nuevo
         if (chats === null){
-            reply.message = this.newChat(phoneNumber);
+            reply = this.newChat(phoneNumber);
         }
         //Si hay mas de un chat al mismo tiempo con ese numero, error interno
         else if(chats.length > 1){
-            reply.message = control.internalError();
+            reply = control.internalError();
         }
         else{
-            reply.chat = chats[0];
-            reply.message = this.continueChat(chats[0], clientReply);
+            reply = this.continueChat(chats[0], clientReply);
         }
         return reply;
     }
 
     newChat = async (phoneNumber) => {
-        const chat = new Chat(phoneNumber, Date.now(), null);
-        console.log(`chat que va a montar ${chat}`)
-        addChatToArray(chat);
         const chatsvc = new ChatService();
-        console.log(`chat como se monto ${chatsvc.getChatArray()}`)
+        chatsvc.addChatToArray(phoneNumber, Date.now(), null);
         let reply = this.initialize(phoneNumber);
         return reply;
     }
