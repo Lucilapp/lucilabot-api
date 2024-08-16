@@ -14,11 +14,8 @@ export default class ChatService {
     }
 
     updateChatLastMessage = async (phoneNumber, lastMessageID) => {
-        console.log(`lo que se manda para updatear: ${phoneNumber} ${lastMessageID}`)
         let oldChat = ChatStore.getChatsByPhoneNumber(phoneNumber)[0];
-        console.log(`oldchat ${JSON.stringify(oldChat)}`)
         let updatedChat = new Chat(phoneNumber, oldChat.startingTime, lastMessageID);
-        console.log(`lo que quiere mandar a updatear: ${JSON.stringify(updatedChat)}`)
         ChatStore.updateChatByPhoneNumber(updatedChat);
     }
 

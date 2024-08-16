@@ -7,27 +7,30 @@ import MessageRepository from "../repositories/message-repository.js";
 export default class MessageService {
     getMessageById = async (messageID) => {
         const repo = new MessageRepository();
+        console.log(`messageID en el service ${messageID}`);
         const message = await repo.getMessageByID(messageID);
+        console.log(`message como llega al svc ${JSON.stringify(message)}`)
         const reply = await this.mountMessage(message);
+        console.log(`como devuelte reply: ${JSON.stringify(reply)}`)
         return reply;
     }
 
     getNextMessage = async (lastMessageID) => {
         const repo = new MessageRepository();
-        const message = repo.getNextMessage(lastMessageID);
-        const reply = this.mountMessage(message);
+        const message = await repo.getNextMessage(lastMessageID);
+        const reply = await this.mountMessage(message);
         return reply;
     }
 
     getNextMessageByOption = async (lastMessageID, option) => {
         const repo = new MessageRepository();
-        const message = repo.getNextMessageByOption(lastMessageID);
+        const message = await repo.getNextMessageByOption(lastMessageID);
         let reply;
         if(message){
             reply = this.mountMessage(message);
         }
         else{
-            reply = repo.getMessageByID(ID_MENSAJE_RESPUESTA_INVALIDA);
+            reply = await repo.getMessageByID(ID_MENSAJE_RESPUESTA_INVALIDA);
         }
         return reply;
     }

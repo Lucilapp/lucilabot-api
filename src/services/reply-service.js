@@ -21,21 +21,25 @@ export default class ReplyService {
 
     continueChat = (chat, clientReply) => {
         const msg = new MessageService();
+        const control = new ControlService();
         let reply;
         //Si ya se paso del tiempo máximo, le tira timeout
-        if(!control.checkTimeOut(filteredChatsArray[0])) {
+        if(!control.checkTimeOut(chat)) {
             reply = msg.getMessageById(ID_MENSAJE_TIMEOUT);
         }
-        else { 
-            let lastMessage = msg.getMessageById(chat.lastStep);
+        else {
+            //console.log(`este es el anterior chat: ${JSON.stringify(chat)}`)
+            let lastMessage = msg.getMessageById(parseInt(chat.lastMessage));
+            console.log(msg.getMessageById(parseInt(chat.lastMessage)))
+            console.log(JSON.stringify(lastMessage));
             if(lastMessage.replyable){
-                reply = msg.getNextMessageByOption(lastMessage.ID, clientReply);
+                reply = msg.getNextMessageByOption(lastMessage.Id, clientReply);
                 if(reply === null){
                     //Decir que debe responder de nuevo
                 }
             }
             else{
-                reply = msg.getNextMessage(lastMessage.ID);
+                reply = msg.getNextMessage(lastMessage.Id);
             }
         }
         return reply;

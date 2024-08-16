@@ -23,8 +23,7 @@ whatsappClient.on("message", async(msg) =>{
             const replysvc = new ReplyService();
             const msgsvc = new MessageService();
             const chatsvc = new ChatService();
-            
-            if (wppContact.number === '5491131172583') {
+            if (wppContact.number === '5491126447860') {
                 (async () => {
                     const bot = async () => {
                         try {

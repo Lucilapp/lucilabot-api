@@ -34,22 +34,18 @@ class ChatStore {
 
     updateChatByPhoneNumber(updatedChat) {
         let reply;
-        console.log(`update: ${JSON.stringify(updatedChat)}`)
-        console.log(`array 1 : ${JSON.stringify(this.getChatArray())}`)
-        let phoneNumber = updatedChat.phoneNumber;
-        const index = this.chatArray.findIndex(chat => chat.phoneNumber === phoneNumber);
-        if (index === -1) { 
+        let phoneNumber = updatedChat.number;
+        const index = this.chatArray.findIndex(chat => chat.number === phoneNumber);
+        if (index === -1) {
             reply = false;
-        }else{
-            this.chatArray[index].number = updatedChat.number;
-            this.chatArray[index].lastMessage = updatedChat.lastMessage;
-            this.chatArray[index].startingTime = updatedChat.startingTime;
-            console.log(`array 2 : ${JSON.stringify(this.getChatArray())}`)
+        } else {
+            this.chatArray.splice(index,1);
+            this.addChatToArray(updatedChat)
             reply = true;
         }
-        
+    
         return reply;
-    }
+    }    
 }
 
 const instance = new ChatStore();
