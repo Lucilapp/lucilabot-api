@@ -5,46 +5,7 @@ import MessageService from "./message-service.js";
 import ChatService from "./chat-service.js";
 
 export default class ReplyService {
-    initialize = async (phoneNumber) => {
-        //Aca tiene que verificar si es un cliente nuevo o ya esta registrado, y continuar acordemente
-        const acc = new AccountService();
-        const msg = new MessageService();
-        let reply;
-        if(acc.getAccount(phoneNumber)){
-            reply = await msg.getMessageById(ID_MENSAJE_INICIO);
-        }
-        else{
-            reply = await msg.getMessageById(ID_MENSAJE_REGISTRO);
-        }
-        return reply;
-    }
-
-    continueChat = (chat, clientReply) => {
-        const msg = new MessageService();
-        const control = new ControlService();
-        let reply;
-        //Si ya se paso del tiempo máximo, le tira timeout
-        if(!control.checkTimeOut(chat)) {
-            reply = msg.getMessageById(ID_MENSAJE_TIMEOUT);
-        }
-        else {
-            //console.log(`este es el anterior chat: ${JSON.stringify(chat)}`)
-            let lastMessage = msg.getMessageById(parseInt(chat.lastMessage));
-            console.log(msg.getMessageById(parseInt(chat.lastMessage)))
-            console.log(JSON.stringify(lastMessage));
-            if(lastMessage.replyable){
-                reply = msg.getNextMessageByOption(lastMessage.Id, clientReply);
-                if(reply === null){
-                    //Decir que debe responder de nuevo
-                }
-            }
-            else{
-                reply = msg.getNextMessage(lastMessage.Id);
-            }
-        }
-        return reply;
-    }
-
+    
     checkChat = async (phoneNumber, clientReply) => {
         const chatsvc = new ChatService();
         const chats = chatsvc.getChatByPhoneNumber(phoneNumber);
@@ -70,4 +31,42 @@ export default class ReplyService {
         let reply = this.initialize(phoneNumber);
         return reply;
     }
+
+    initialize = async (phoneNumber) => {
+        //Aca tiene que verificar si es un cliente nuevo o ya esta registrado, y continuar acordemente
+        const acc = new AccountService();
+        const msg = new MessageService();
+        let reply;
+        if(acc.getAccount(phoneNumber)){
+            reply = await msg.getMessageById(ID_MENSAJE_INICIO);
+        }
+        else{
+            reply = await msg.getMessageById(ID_MENSAJE_REGISTRO);
+        }
+        return reply;
+    }
+
+    continueChat = async (chat, clientReply) => {
+        const msg = new MessageService();
+        const control = new ControlService();
+        let reply;
+        //Si ya se paso del tiempo máximo, le tira timeout
+        if(!control.checkTimeOut(chat)) {
+            reply = msg.getMessageById(ID_MENSAJE_TIMEOUT);
+        }
+        else {
+            let lastMessage = await msg.getMessageById(chat.lastMessage);
+            if(lastMessage.replyable){
+                reply = await msg.getNextMessageByOption(lastMessage.Id, clientReply);
+                if(reply === null){
+                    //Decir que debe responder de nuevo
+                }
+            }
+            else{
+                reply = await msg.getNextMessage(lastMessage.Id);
+            }
+        }
+        return reply;
+    }
+
 }

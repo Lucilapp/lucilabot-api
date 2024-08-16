@@ -7,11 +7,8 @@ import MessageRepository from "../repositories/message-repository.js";
 export default class MessageService {
     getMessageById = async (messageID) => {
         const repo = new MessageRepository();
-        console.log(`messageID en el service ${messageID}`);
         const message = await repo.getMessageByID(messageID);
-        console.log(`message como llega al svc ${JSON.stringify(message)}`)
         const reply = await this.mountMessage(message);
-        console.log(`como devuelte reply: ${JSON.stringify(reply)}`)
         return reply;
     }
 

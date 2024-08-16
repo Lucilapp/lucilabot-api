@@ -5,6 +5,7 @@ export default class ChatService {
 
     getChatByPhoneNumber = (phoneNumber) => {
         const chat = ChatStore.getChatsByPhoneNumber(phoneNumber);
+        console.log(chat)
         return chat;
     }
 

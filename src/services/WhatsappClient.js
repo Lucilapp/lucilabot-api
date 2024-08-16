@@ -44,8 +44,9 @@ whatsappClient.on("message", async(msg) =>{
                             await wppChat.sendMessage(reply.text);  // Asegúrate de que sendMessage sea asíncrona
                 
                             // Fase 4: Actualizar el último mensaje en el chat
-                            await chatsvc.updateChatLastMessage(wppContact.number, reply.ID);
-                            if(!reply.replyable && reply.ID !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.ID !== ID_MENSAJE_TIMEOUT.toString()){
+                            await chatsvc.updateChatLastMessage(wppContact.number, reply.Id);
+                            
+                            if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString()){
                                 bot();
                             }
                 

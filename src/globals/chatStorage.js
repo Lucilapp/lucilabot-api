@@ -16,7 +16,6 @@ class ChatStore {
     }
 
     addChatToArray(chat) {
-        console.log(`se añadira este chat ${JSON.stringify(chat)}`)
         this.chatArray.push(chat);
     }
 
