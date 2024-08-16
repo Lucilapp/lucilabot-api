@@ -57,7 +57,13 @@ export default class ReplyService {
         else {
             let lastMessage = await msg.getMessageById(chat.lastMessage);
             if(lastMessage.replyable){
-                reply = await msg.getNextMessageByOption(lastMessage.Id, clientReply);
+                if(lastMessage.saveAnswer){
+                    reply = await msg.getNextMessage(lastMessage.Id);
+                }
+                else{
+                    reply = await msg.getNextMessageByOption(lastMessage.Id, clientReply);
+                }
+                
                 if(reply === null){
                     //Decir que debe responder de nuevo
                 }

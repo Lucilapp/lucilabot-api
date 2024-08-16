@@ -33,11 +33,14 @@ export default class MessageService {
     }
 
     mountMessage = async (message) => {
+        console.log(message)
         const repo = new MessageRepository();
-        const msgOpt = await repo.getMessageOptions(message.Id)[0]
+        const msgOpt = await repo.getMessageOptions(message.Id)
+        const opt = msgOpt[0];
+        console.log(opt)
         let replyable = false;
-        if(msgOpt && typeof msgOpt === 'object' && Object.prototype.hasOwnProperty.call(msgOpt, 'Option')){
-            replyable = msgOpt.Option !== null || message.GuardarRespuesta;
+        if(opt && typeof opt === 'object' && Object.prototype.hasOwnProperty.call(opt, 'Option')){
+            replyable = opt.Option !== null || message.GuardarRespuesta;
         }
         let reply = new Message(message.Id, message.Texto, replyable, message.GuardarRespuesta);
         return reply;

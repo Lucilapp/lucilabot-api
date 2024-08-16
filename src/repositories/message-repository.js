@@ -29,6 +29,7 @@ export default class MessageRepository {
         const query = `SELECT "IdHijo" FROM "Relacion_Mensaje" WHERE "IdPadre" = $1 AND "Option" = $2 LIMIT 1`;
         const values = [lastMessageID, option];
         const nextMessage = await pgHelper.sqlQuery(query, values);
+        console.log(nextMessage);
         return await this.getMessageByID(parseInt(nextMessage[0].IdHijo));
     }
 }
