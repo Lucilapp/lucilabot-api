@@ -10,7 +10,7 @@ const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
 var socket = null;
-
+var senderID = null;
 whatsappClient.on('qr', (qr) => {
     qrcode.generate(qr, {small:true})
 })
@@ -71,7 +71,7 @@ whatsappClient.on("message", async(msg) =>{
                                 bot();
                                 }
                                 else if (chatAlreadyConnected){
-                                    socket.emit('messageSend', 'wpp', msg);
+                                    socket.emit('messageSend', socket.id, msg, );
                                 } 
                             }
                             
@@ -93,4 +93,8 @@ whatsappClient.on("message", async(msg) =>{
     }
 })
 
+socket.on('recieveMessage', (msg, senderId) => {
+    senderID = senderId;
+    //WhatsappClient.send(msg)
+})
 export default whatsappClient;
