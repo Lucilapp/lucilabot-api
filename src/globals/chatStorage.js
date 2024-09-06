@@ -44,7 +44,11 @@ class ChatStore {
         }
     
         return reply;
-    }    
+    }
+    
+    removeChatsByPhoneNumber(numberToRemove){
+        this.chatArray = this.chatArray.filter(item => item.number !== numberToRemove);
+    }
 }
 
 const instance = new ChatStore();

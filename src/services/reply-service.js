@@ -1,4 +1,4 @@
-import { ID_MENSAJE_INICIO, ID_MENSAJE_REGISTRO, ID_MENSAJE_TIMEOUT } from "../config/constants.js";
+import { ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INICIO, ID_MENSAJE_REGISTRO, ID_MENSAJE_TIMEOUT } from "../config/constants.js";
 import AccountService from "./account-service.js";
 import ControlService from  "./control-service.js";
 import MessageService from "./message-service.js";
@@ -9,10 +9,11 @@ export default class ReplyService {
     checkChat = async (phoneNumber, clientReply) => {
         const chatsvc = new ChatService();
         const chats = chatsvc.getChatByPhoneNumber(phoneNumber);
+        console.log(chats)
         const control = new ControlService();
         let reply = null;
         //Si no hay ningun chat inicia uno nuevo
-        if (chats === null){
+        if (chats === null || chats[0].lastMessage === ID_MENSAJE_TIMEOUT.toString() || chats[0].lastMessage === ID_MENSAJE_ERROR_INTERNO.toString() || chats[0].lastMessage === ID_MENSAJE_FIN_REGISTRO.toString()){
             reply = this.newChat(phoneNumber);
         }
         //Si hay mas de un chat al mismo tiempo con ese numero, error interno

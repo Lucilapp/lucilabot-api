@@ -13,6 +13,10 @@ export default class ChatService {
         return chats;
     }
 
+    removeChatsByPhoneNumber = (numberToRemove) => {
+        ChatStore.removeChatsByPhoneNumber(numberToRemove)
+    }
+
     updateChatLastMessage = async (phoneNumber, lastMessageID) => {
         let oldChat = ChatStore.getChatsByPhoneNumber(phoneNumber)[0];
         let updatedChat = new Chat(phoneNumber, oldChat.startingTime, lastMessageID);

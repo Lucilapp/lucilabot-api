@@ -33,11 +33,9 @@ export default class MessageService {
     }
 
     mountMessage = async (message) => {
-        console.log(message)
         const repo = new MessageRepository();
         const msgOpt = await repo.getMessageOptions(message.Id)
         const opt = msgOpt[0];
-        console.log(opt)
         let replyable = false;
         if(opt && typeof opt === 'object' && Object.prototype.hasOwnProperty.call(opt, 'Option')){
             replyable = opt.Option !== null || message.GuardarRespuesta;

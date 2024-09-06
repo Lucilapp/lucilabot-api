@@ -5,7 +5,7 @@ import qrcode from 'qrcode-terminal';
 import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
-import { ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT } from '../config/constants.js';
+import { ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT } from '../config/constants.js';
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
@@ -27,7 +27,7 @@ whatsappClient.on("message", async(msg) =>{
             const chatsvc = new ChatService();
             var chatConnecting = false;
             var chatAlreadyConnected = false;
-            if (wppContact.number === '5491126447860') {
+            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860') {
                 (async () => {
                     const bot = async () => {
                         try {
@@ -46,7 +46,7 @@ whatsappClient.on("message", async(msg) =>{
                                 }
                     
                                 // Fase 3: Mandar el siguiente mensaje
-                                await wppChat.sendMessage(reply.text);  // Asegúrate de que sendMessage sea asíncrona
+                                await wppChat.sendMessage(reply.text);
                     
                                 // Fase 4: Actualizar el último mensaje en el chat
                                 await chatsvc.updateChatLastMessage(wppContact.number, reply.Id);
@@ -54,14 +54,17 @@ whatsappClient.on("message", async(msg) =>{
                                     chatConnecting = true;
                                     bot();
                                 }
-                                else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString()){
+                                else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString()){
                                     bot();
+                                }
+                                else {
+                                    chatsvc.removeChatsByPhoneNumber(wppContact.number);
                                 }
                             }
                             else {
                                 if(chatConnecting){
                                 //Si empieza el chat con el joven
-                                socket = io('http://localhost:5000')
+                                socket = io('https://cf81-200-73-176-50.ngrok-free.app')
                                 
                                 chatConnecting = false;
                                 chatAlreadyConnected = true;
@@ -79,7 +82,7 @@ whatsappClient.on("message", async(msg) =>{
                             console.error("Error en alguna de las fases:", error);
                         }
                     }
-                    if(!chatConnected){
+                    if(!chatConnecting){
                         bot();
                     }
                 })();
@@ -93,8 +96,8 @@ whatsappClient.on("message", async(msg) =>{
     }
 })
 
-socket.on('recieveMessage', (msg, senderId) => {
-    senderID = senderId;
-    //WhatsappClient.send(msg)
-})
+// socket.on('recieveMessage', (msg, senderId) => {
+//     senderID = senderId;
+//     //WhatsappClient.send(msg)
+// })
 export default whatsappClient;
