@@ -20,6 +20,7 @@ class ChatStore {
     }
 
     getChatsByPhoneNumber(phoneNumber) {
+        console.log(this.chatArray);
         const chats = this.chatArray.filter(chat => chat.number === phoneNumber);
         let reply;
         if(chats.length > 0){
@@ -47,7 +48,18 @@ class ChatStore {
     }
     
     removeChatsByPhoneNumber(numberToRemove){
-        this.chatArray = this.chatArray.filter(item => item.number !== numberToRemove);
+        console.log("Entro en remove")
+        const modifArray = this.chatArray.filter(item => item.number !== numberToRemove);
+        const arrayLength = this.chatArray.length;
+        for (let index = 0; index < arrayLength; index++) {
+            this.chatArray.pop()
+        }
+        const noUndefinedArray = modifArray.filter(item => item !== undefined);
+        console.log(noUndefinedArray)
+        for (let index = 0; index < noUndefinedArray.length; index++) {
+            this.chatArray.push(noUndefinedArray[index])
+        }
+        console.log(this.chatArray)
     }
 }
 

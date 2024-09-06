@@ -27,7 +27,7 @@ whatsappClient.on("message", async(msg) =>{
             const chatsvc = new ChatService();
             var chatConnecting = false;
             var chatAlreadyConnected = false;
-            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860') {
+            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952') {
                 (async () => {
                     const bot = async () => {
                         try {
@@ -57,7 +57,7 @@ whatsappClient.on("message", async(msg) =>{
                                 else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString()){
                                     bot();
                                 }
-                                else {
+                                else if(reply.Id === ID_MENSAJE_ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
                                     chatsvc.removeChatsByPhoneNumber(wppContact.number);
                                 }
                             }
