@@ -1,6 +1,7 @@
 import pkg from 'whatsapp-web.js';
 import { io } from "socket.io-client";
 const { Client, LocalAuth } = pkg;
+const SocketURL =  "https://9d6b-186-12-52-107.ngrok-free.app"
 import qrcode from 'qrcode-terminal';
 import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
@@ -25,7 +26,7 @@ whatsappClient.on("message", async(msg) =>{
             const replysvc = new ReplyService();
             const msgsvc = new MessageService();
             const chatsvc = new ChatService();
-            var chatConnecting = false;
+            var chatConnecting = true;
             var chatAlreadyConnected = false;
             if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952') {
                 (async () => {
@@ -64,17 +65,15 @@ whatsappClient.on("message", async(msg) =>{
                             else {
                                 if(chatConnecting){
                                 //Si empieza el chat con el joven
-                                socket = io('https://cf81-200-73-176-50.ngrok-free.app')
-                                
+                                socket = io(SocketURL);
+                                console.log(socket);
                                 chatConnecting = false;
                                 chatAlreadyConnected = true;
-                                // socket.on('connect', () => {
-                                //     wppChat.sendMessage(msgsvc.getMessageById(ID_MENSAJE_CONEXION_CHAT))
-                                // })
                                 bot();
                                 }
                                 else if (chatAlreadyConnected){
-                                    socket.emit('messageSend', socket.id, msg, );
+                                    //console.log("mensaje:", socket.id, msg, "a")
+                                    socket.emit('messageSend', socket.id, msg, "a");
                                 } 
                             }
                             
@@ -82,9 +81,7 @@ whatsappClient.on("message", async(msg) =>{
                             console.error("Error en alguna de las fases:", error);
                         }
                     }
-                    if(!chatConnecting){
-                        bot();
-                    }
+                    bot();
                 })();
 
             }
