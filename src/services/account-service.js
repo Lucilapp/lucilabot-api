@@ -11,7 +11,8 @@ export default class AccountService {
         return reply;
     }
 
-    createAccount = () => {
-        
+    createAccount = (userObj) => {
+        const repo = new AccountRepository();
+        let reply = repo.createAccount(userObj);
     }
 }

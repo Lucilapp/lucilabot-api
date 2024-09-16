@@ -6,7 +6,7 @@ import qrcode from 'qrcode-terminal';
 import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
-import { ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT } from '../config/constants.js';
+import { ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT } from '../config/constants.js';
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
@@ -26,7 +26,14 @@ whatsappClient.on("message", async(msg) =>{
             const replysvc = new ReplyService();
             const msgsvc = new MessageService();
             const chatsvc = new ChatService();
-            var chatConnecting = true;
+            var user = {
+                Id: 0,
+                Nombre: '',
+                Telefono: 0,
+                Edad: 0,
+                Genero: ''
+            }
+            var chatConnecting = false;
             var chatAlreadyConnected = false;
             if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952') {
                 (async () => {
@@ -38,12 +45,25 @@ whatsappClient.on("message", async(msg) =>{
                     
                                 // Fase 2: Verificar si se debe guardar la respuesta
                                 const chat = chatsvc.getChatByPhoneNumber(wppContact.number)[0];
-                                let lastMessage = chat ? chat.lastMessage : null; 
+                                let lastMessage = chat.lastMessage ? await msgsvc.getMessageById(chat.lastMessage) : null; 
                                 if (lastMessage !== null) {
-                                    if(lastMessage.dbInput){
-        
+                                    if(lastMessage.saveAnswer){
+                                        switch(lastMessage.Id){
+                                            case ID_MENSAJE_INPUT_NOMBRE:
+                                                user.Nombre = lastMessage.text;
+                                                break;
+                                            case ID_MENSAJE_INPUT_EDAD:
+                                                user.Edad = lastMessage.text;
+                                                break;
+                                            case ID_MENSAJE_INPUT_DNI:
+                                                break;
+                                            case ID_MENSAJE_INPUT_GENERO:
+                                                user.Genero = lastMessage.text;
+                                                
+                                                break;
+                                        }
+                                        console.log(user);
                                     }
-                                    // Grabar respuesta
                                 }
                     
                                 // Fase 3: Mandar el siguiente mensaje
@@ -66,7 +86,6 @@ whatsappClient.on("message", async(msg) =>{
                                 if(chatConnecting){
                                 //Si empieza el chat con el joven
                                 socket = io(SocketURL);
-                                console.log(socket);
                                 chatConnecting = false;
                                 chatAlreadyConnected = true;
                                 bot();

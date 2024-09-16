@@ -9,7 +9,6 @@ export default class ReplyService {
     checkChat = async (phoneNumber, clientReply) => {
         const chatsvc = new ChatService();
         const chats = chatsvc.getChatByPhoneNumber(phoneNumber);
-        console.log(chats)
         const control = new ControlService();
         let reply = null;
         //Si no hay ningun chat inicia uno nuevo

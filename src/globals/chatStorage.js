@@ -20,7 +20,6 @@ class ChatStore {
     }
 
     getChatsByPhoneNumber(phoneNumber) {
-        console.log(this.chatArray);
         const chats = this.chatArray.filter(chat => chat.number === phoneNumber);
         let reply;
         if(chats.length > 0){
