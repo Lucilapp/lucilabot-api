@@ -7,11 +7,20 @@ import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
 import { ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT } from '../config/constants.js';
+import AccountService from './account-service.js';
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
 var socket = null;
 var senderID = null;
+var user = {
+    Id: 0,
+    Nombre: '',
+    Telefono: 0,
+    Edad: 0,
+    Genero: ''
+}
+
 whatsappClient.on('qr', (qr) => {
     qrcode.generate(qr, {small:true})
 })
@@ -26,13 +35,7 @@ whatsappClient.on("message", async(msg) =>{
             const replysvc = new ReplyService();
             const msgsvc = new MessageService();
             const chatsvc = new ChatService();
-            var user = {
-                Id: 0,
-                Nombre: '',
-                Telefono: 0,
-                Edad: 0,
-                Genero: ''
-            }
+            const accsvc = new AccountService();
             var chatConnecting = false;
             var chatAlreadyConnected = false;
             if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952') {
@@ -47,19 +50,20 @@ whatsappClient.on("message", async(msg) =>{
                                 const chat = chatsvc.getChatByPhoneNumber(wppContact.number)[0];
                                 let lastMessage = chat.lastMessage ? await msgsvc.getMessageById(chat.lastMessage) : null; 
                                 if (lastMessage !== null) {
-                                    if(lastMessage.saveAnswer){
-                                        switch(lastMessage.Id){
+                                    if(lastMessage.saveAnswer) {
+                                        switch(parseInt(lastMessage.Id)){
                                             case ID_MENSAJE_INPUT_NOMBRE:
-                                                user.Nombre = lastMessage.text;
+                                                user.Nombre = msg.body;
                                                 break;
                                             case ID_MENSAJE_INPUT_EDAD:
-                                                user.Edad = lastMessage.text;
+                                                user.Edad = msg.body;
                                                 break;
                                             case ID_MENSAJE_INPUT_DNI:
                                                 break;
                                             case ID_MENSAJE_INPUT_GENERO:
-                                                user.Genero = lastMessage.text;
-                                                
+                                                user.Genero = msg.body;
+                                                user.Telefono = accsvc.formatPhone(msg.from);
+                                                accsvc.createAccount(user);
                                                 break;
                                         }
                                         console.log(user);

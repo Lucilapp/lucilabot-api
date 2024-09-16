@@ -15,4 +15,9 @@ export default class AccountService {
         const repo = new AccountRepository();
         let reply = repo.createAccount(userObj);
     }
+
+    formatPhone = (phoneNumber) => {
+        return phoneNumber.replace(/\D/g, '');
+
+    }
 }

@@ -10,7 +10,7 @@ export default class AccountRepository {
         const pgHelper = new PgHelper();
         let success = true;
         try {
-            await pgHelper.sqlQuery(`Select * from "Cliente" where "Telefono" = ${phoneNumber}`);
+            await pgHelper.sqlQuery(`INSERT INTO "Cliente" ("Nombre", "Telefono", "Edad", "Genero") VALUES ('${user.Nombre}', '${user.Telefono}', '${user.Edad}', '${user.Genero}')`);
         } catch (error) {
             console.log(error);
             success = false;
