@@ -37,6 +37,7 @@ export default class ReplyService {
         const acc = new AccountService();
         const msg = new MessageService();
         let reply;
+        console.log(acc.getAccount(phoneNumber));
         if(acc.getAccount(phoneNumber)){
             reply = await msg.getMessageById(ID_MENSAJE_INICIO);
         }

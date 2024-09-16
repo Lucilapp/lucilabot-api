@@ -38,7 +38,7 @@ whatsappClient.on("message", async(msg) =>{
             const accsvc = new AccountService();
             var chatConnecting = false;
             var chatAlreadyConnected = false;
-            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952') {
+            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952' || wppContact.number === '5491126215005') {
                 (async () => {
                     const bot = async () => {
                         try {

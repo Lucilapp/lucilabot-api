@@ -47,18 +47,15 @@ class ChatStore {
     }
     
     removeChatsByPhoneNumber(numberToRemove){
-        console.log("Entro en remove")
         const modifArray = this.chatArray.filter(item => item.number !== numberToRemove);
         const arrayLength = this.chatArray.length;
         for (let index = 0; index < arrayLength; index++) {
             this.chatArray.pop()
         }
         const noUndefinedArray = modifArray.filter(item => item !== undefined);
-        console.log(noUndefinedArray)
         for (let index = 0; index < noUndefinedArray.length; index++) {
             this.chatArray.push(noUndefinedArray[index])
         }
-        console.log(this.chatArray)
     }
 }
 
