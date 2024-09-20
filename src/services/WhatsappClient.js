@@ -10,7 +10,6 @@ import AccountService from './account-service.js';
 import HistoryService from './history-service.js';
 import TaskService from './task-service.js';
 
-var chatConnecting = false;
 var chatAlreadyConnected = false;
 var answering = false;
 const whatsappClient = new Client({
@@ -49,8 +48,7 @@ whatsappClient.on("message", async(msg) =>{
                 (async () => {
                     const bot = async () => {
                         try {
-                            console.log(chatConnecting)
-                            if(!chatConnecting && !chatAlreadyConnected){
+                            if(!chatAlreadyConnected){
                                 // Fase 2: Decidir el siguiente mensaje
                                 let reply = await replysvc.checkChat(wppContact.number, msg.body);
                                 
@@ -83,7 +81,10 @@ whatsappClient.on("message", async(msg) =>{
                                                 let msgHist = CatArray.find(obj => obj.idMsg === parseInt(optMsg.messageId))
                                                 let catId = msgHist.answers.find(ans => ans.letter === optMsg.reply).catId
                                                 let clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
-                                                tasksvc.createTask(msg.body, catId, clientId)
+                                                socket = io(SOCKET_API_IP);
+                                                socket.on("connect", () => {
+                                                    tasksvc.createTask(msg.body, catId, clientId, socket.id);
+                                                })
                                                 break;
                                         }
                                     }
@@ -95,7 +96,7 @@ whatsappClient.on("message", async(msg) =>{
                                 await chatsvc.updateChatLastMessage(wppContact.number, reply.Id);
                                 console.log(reply.Id + " " + ID_MENSAJE_CONEXION_CHAT)
                                 if(reply.Id.toString() === ID_MENSAJE_CONEXION_CHAT.toString()){
-                                    chatConnecting = true;
+                                    chatAlreadyConnected = true;
                                     bot();
                                 }
                                 else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString()){
@@ -106,15 +107,8 @@ whatsappClient.on("message", async(msg) =>{
                                 }
                             }
                             else {
-                                if(chatConnecting){
-                                //Si empieza el chat con el joven
-                                socket = io(SOCKET_API_IP);
-                                chatConnecting = false;
-                                chatAlreadyConnected = true;
-                                bot();
-                                }
-                                else if (chatAlreadyConnected){
-                                    //console.log("mensaje:", socket.id, msg, "a")
+                                if (chatAlreadyConnected){
+                                    //Inserte en la tarea el socketID
                                     socket.emit('messageSend', socket.id, msg.body, "a");
                                 } 
                             }
