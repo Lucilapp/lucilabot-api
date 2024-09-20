@@ -5,7 +5,7 @@ import qrcode from 'qrcode-terminal';
 import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
-import { CatArray, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP } from '../config/constants.js';
+import { CatArray, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE } from '../config/constants.js';
 import AccountService from './account-service.js';
 import HistoryService from './history-service.js';
 import TaskService from './task-service.js';
@@ -75,6 +75,10 @@ whatsappClient.on("message", async(msg) =>{
                                                 
                                                 
                                                 break;
+                                            case ID_MENSAJE_INPUT_SOPORTE:
+                                                accsvc.createReport()
+
+                                                break;
                                             case ID_MENSAJE_INPUT_AYUDA_APPS:
                                                 let history = histsvc.getChatHistory(wppContact.number);
                                                 let optMsg = history[history.length - 2];
@@ -102,7 +106,7 @@ whatsappClient.on("message", async(msg) =>{
                                 else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString()){
                                     bot();
                                 }
-                                else if(reply.Id === ID_MENSAJE_ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
+                                else if(reply.Id === ID_MENSAJE_|ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
                                     chatsvc.removeChatsByPhoneNumber(wppContact.number);
                                 }
                             }
