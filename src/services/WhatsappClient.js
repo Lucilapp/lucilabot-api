@@ -9,6 +9,7 @@ import { CatArray, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJ
 import AccountService from './account-service.js';
 import HistoryService from './history-service.js';
 import TaskService from './task-service.js';
+import ReportService from './report-service.js';
 
 var chatAlreadyConnected = false;
 var answering = false;
@@ -17,6 +18,7 @@ const whatsappClient = new Client({
 })
 var socket = null;
 var senderID = null;
+var clientId = null;
 var user = {
     Id: 0,
     Nombre: '',
@@ -43,6 +45,7 @@ whatsappClient.on("message", async(msg) =>{
             const accsvc = new AccountService();
             const histsvc = new HistoryService();
             const tasksvc = new TaskService();
+            const repsvc = new ReportService();
             
             if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952' || wppContact.number === '5491126215005' || wppContact.number === '5491131172583') {
                 (async () => {
@@ -76,7 +79,8 @@ whatsappClient.on("message", async(msg) =>{
                                                 
                                                 break;
                                             case ID_MENSAJE_INPUT_SOPORTE:
-                                                accsvc.createReport()
+                                                clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
+                                                repsvc.createReport(reply.Id, clientId, msg.body)
 
                                                 break;
                                             case ID_MENSAJE_INPUT_AYUDA_APPS:
@@ -84,7 +88,7 @@ whatsappClient.on("message", async(msg) =>{
                                                 let optMsg = history[history.length - 2];
                                                 let msgHist = CatArray.find(obj => obj.idMsg === parseInt(optMsg.messageId))
                                                 let catId = msgHist.answers.find(ans => ans.letter === optMsg.reply).catId
-                                                let clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
+                                                clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
                                                 socket = io(SOCKET_API_IP);
                                                 socket.on("connect", () => {
                                                     tasksvc.createTask(msg.body, catId, clientId, socket.id);
@@ -106,7 +110,7 @@ whatsappClient.on("message", async(msg) =>{
                                 else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString()){
                                     bot();
                                 }
-                                else if(reply.Id === ID_MENSAJE_|ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
+                                else if(reply.Id === ID_MENSAJE_ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
                                     chatsvc.removeChatsByPhoneNumber(wppContact.number);
                                 }
                             }
