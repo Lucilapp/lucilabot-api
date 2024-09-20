@@ -3,6 +3,7 @@ import AccountService from "./account-service.js";
 import ControlService from  "./control-service.js";
 import MessageService from "./message-service.js";
 import ChatService from "./chat-service.js";
+import HistoryService from "./history-service.js";
 
 export default class ReplyService {
     
@@ -34,11 +35,11 @@ export default class ReplyService {
 
     initialize = async (phoneNumber) => {
         //Aca tiene que verificar si es un cliente nuevo o ya esta registrado, y continuar acordemente
-        const acc = new AccountService();
+        const acc = new AccountService(); 
         const msg = new MessageService();
         let reply;
-        console.log(acc.getAccount(phoneNumber));
-        if(acc.getAccount(phoneNumber)){
+        const accounts = await acc.getAccounts(phoneNumber);
+        if(accounts.length > 0){
             reply = await msg.getMessageById(ID_MENSAJE_INICIO);
         }
         else{
@@ -50,6 +51,7 @@ export default class ReplyService {
     continueChat = async (chat, clientReply) => {
         const msg = new MessageService();
         const control = new ControlService();
+        const hist = new HistoryService();
         let reply;
         //Si ya se paso del tiempo máximo, le tira timeout
         if(!control.checkTimeOut(chat)) {
@@ -58,11 +60,13 @@ export default class ReplyService {
         else {
             let lastMessage = await msg.getMessageById(chat.lastMessage);
             if(lastMessage.replyable){
+                hist.saveChatHistory(chat.number, chat.lastMessage, clientReply);
                 if(lastMessage.saveAnswer){
                     reply = await msg.getNextMessage(lastMessage.Id);
                 }
                 else{
-                    reply = await msg.getNextMessageByOption(lastMessage.Id, clientReply);
+                    let opt = clientReply.toUpperCase();
+                    reply = await msg.getNextMessageByOption(lastMessage.Id, opt);
                 }
                 
                 if(reply === null){
@@ -75,5 +79,7 @@ export default class ReplyService {
         }
         return reply;
     }
+
+    
 
 }

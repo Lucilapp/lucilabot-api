@@ -4,7 +4,6 @@ export default class AccountRepository {
     getAccount = async (phoneNumber) => {
         const pgHelper = new PgHelper();
         const ret = await pgHelper.sqlQuery(`Select * from "Cliente" where "Telefono" = ${phoneNumber}`);
-        console.log(ret)
         return ret;
     }
 

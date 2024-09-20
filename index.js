@@ -7,4 +7,4 @@ const app = express()
 app.use(express.json())
 app.use(messageRouter)
 
-app.listen(3000, () => console.log('Server Ready'))
+app.listen(3001, () => console.log('Server Ready'))

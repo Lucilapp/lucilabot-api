@@ -21,7 +21,7 @@ export default class MessageService {
 
     getNextMessageByOption = async (lastMessageID, option) => {
         const repo = new MessageRepository();
-        const message = await repo.getNextMessageByOption(lastMessageID);
+        const message = await repo.getNextMessageByOption(lastMessageID, option);
         let reply;
         if(message){
             reply = this.mountMessage(message);
