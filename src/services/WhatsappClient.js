@@ -78,11 +78,11 @@ whatsappClient.on("message", async(msg) =>{
                                                 
                                                 
                                                 break;
-                                            case ID_MENSAJE_INPUT_SOPORTE:
-                                                clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
-                                                repsvc.createReport(reply.Id, clientId, msg.body)
+                                            // case ID_MENSAJE_INPUT_SOPORTE:
+                                            //     clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
+                                            //     repsvc.createReport(reply.Id, clientId, msg.body)
 
-                                                break;
+                                            //     break;
                                             case ID_MENSAJE_INPUT_AYUDA_APPS:
                                                 let history = histsvc.getChatHistory(wppContact.number);
                                                 let optMsg = history[history.length - 2];

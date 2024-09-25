@@ -1,6 +1,6 @@
 //ips
 export const LUCILAPP_API_IP = "http://localhost:3000/api/";
-export const SOCKET_API_IP = "https://f81b-200-73-176-50.ngrok-free.app"
+export const SOCKET_API_IP = "http://localhost:8081"
 
 //control
 export const CHAT_TIMEOUT_MS = 180000;
