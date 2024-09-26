@@ -18,7 +18,6 @@ export default class TaskRepository {
               },
               body: JSON.stringify(data)
             });
-        
             if (response.ok) {
               const result = await response.json();
             } else {

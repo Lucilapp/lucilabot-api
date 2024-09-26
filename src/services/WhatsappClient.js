@@ -93,16 +93,18 @@ whatsappClient.on("message", async(msg) =>{
                                                 socket.on("connect", () => {
                                                     tasksvc.createTask(msg.body, catId, clientId, socket.id);
                                                 })
+                                                socket.on('recieveMessage', (msg, senderId) => {
+                                                    senderID = senderId;
+                                                    wppChat.sendMessage(msg)
+                                                })
                                                 break;
                                         }
                                     }
                                 }
-                    
                                 // Fase 3: Mandar el siguiente mensaje
                                 await wppChat.sendMessage(reply.text);
                                 // Fase 4: Actualizar el último mensaje en el chat
                                 await chatsvc.updateChatLastMessage(wppContact.number, reply.Id);
-                                console.log(reply.Id + " " + ID_MENSAJE_CONEXION_CHAT)
                                 if(reply.Id.toString() === ID_MENSAJE_CONEXION_CHAT.toString()){
                                     chatAlreadyConnected = true;
                                     bot();
@@ -117,7 +119,7 @@ whatsappClient.on("message", async(msg) =>{
                             else {
                                 if (chatAlreadyConnected){
                                     //Inserte en la tarea el socketID
-                                    socket.emit('messageSend', socket.id, msg.body, "a");
+                                    socket.emit('messageSend', socket.id, msg.body, senderID);
                                 } 
                             }
                             answering = false;
@@ -138,8 +140,5 @@ whatsappClient.on("message", async(msg) =>{
     }
 })
 
-// socket.on('recieveMessage', (msg, senderId) => {
-//     senderID = senderId;
-//     //WhatsappClient.send(msg)
-// })
+
 export default whatsappClient;
