@@ -11,6 +11,7 @@ export default class TaskRepository {
             clientSocket: socket
           };
         try {
+            console.log("POST Tarea")
             const response = await fetch(`${LUCILAPP_API_IP}tarea`, {
               method: 'POST',
               headers: {
