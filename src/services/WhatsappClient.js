@@ -46,8 +46,9 @@ whatsappClient.on("message", async(msg) =>{
             const histsvc = new HistoryService();
             const tasksvc = new TaskService();
             const repsvc = new ReportService();
-            
-            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952' || wppContact.number === '5491126215005' || wppContact.number === '5491131172583') {
+            console.log("Conected with:" + wppContact.number)
+            if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952' || wppContact.number === '5491126215005' || wppContact.number === '5491131172583'|| wppContact.number === '5491124609835') {
+                
                 (async () => {
                     const bot = async () => {
                         try {
