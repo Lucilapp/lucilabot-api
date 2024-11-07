@@ -5,13 +5,14 @@ import qrcode from 'qrcode-terminal';
 import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
-import { CatArray, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE } from '../config/constants.js';
+import { CatArray, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE, ID_MENSAJE_CHAT_TERMINADO_EXITOSO, ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO } from '../config/constants.js';
 import AccountService from './account-service.js';
 import HistoryService from './history-service.js';
 import TaskService from './task-service.js';
 import ReportService from './report-service.js';
 
 var chatAlreadyConnected = false;
+var chatFinished = false;
 var answering = false;
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
@@ -82,7 +83,6 @@ whatsappClient.on("message", async(msg) =>{
                                             // case ID_MENSAJE_INPUT_SOPORTE:
                                             //     clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
                                             //     repsvc.createReport(reply.Id, clientId, msg.body)
-
                                             //     break;
                                             case ID_MENSAJE_INPUT_AYUDA_APPS:
                                                 let history = histsvc.getChatHistory(wppContact.number);
@@ -98,6 +98,10 @@ whatsappClient.on("message", async(msg) =>{
                                                     senderID = senderId;
                                                     wppChat.sendMessage(msg)
                                                 })
+                                                socket.on('chatDisconnect', () => {
+                                                    chatAlreadyConnected = false;
+                                                    bot();
+                                                }) 
                                                 break;
                                         }
                                     }
@@ -110,14 +114,18 @@ whatsappClient.on("message", async(msg) =>{
                                     chatAlreadyConnected = true;
                                     bot();
                                 }
-                                else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString()){
+                                else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString() && reply.Id.toString() !== ID_MENSAJE_CHAT_TERMINADO_EXITOSO.toString() && reply.Id !== ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO.toString()){
                                     bot();
                                 }
                                 else if(reply.Id === ID_MENSAJE_ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
                                     chatsvc.removeChatsByPhoneNumber(wppContact.number);
                                 }
+                                else if(reply.Id.toString() === ID_MENSAJE_CHAT_TERMINADO_EXITOSO.toString() || reply.Id === ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO.toString()){
+                                    //momento donde guarda todo el chat
+                                    chatsvc.removeChatsByPhoneNumber(wppContact.number);
+                                }
                             }
-                            else {
+                            else if (chatAlreadyConnected) {
                                 if (chatAlreadyConnected){
                                     //Inserte en la tarea el socketID
                                     socket.emit('messageSend', socket.id, msg.body, senderID);

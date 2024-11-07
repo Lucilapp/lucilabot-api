@@ -24,6 +24,13 @@ export const ID_MENSAJE_INPUT_AYUDA_INICO = 11;
 export const ID_MENSAJE_INPUT_AYUDA_APPS = 16;
 export const ID_MENSAJE_INPUT_SOPORTE = 14;
 
+//finalizacion msgs
+export const ID_MENSAJE_CHAT_TERMINADO = 21;
+export const ID_MENSAJE_CHAT_TERMINADO_EXITOSO = 22;
+export const ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO = 23;
+
+
+
 //categorias
 export const CatArray = [
     {
