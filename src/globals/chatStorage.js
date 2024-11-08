@@ -31,6 +31,20 @@ class ChatStore {
         return reply;
     }
 
+    refreshChatTimeout(phoneNumber) {
+        let reply;
+        const index = this.chatArray.findIndex(chat => chat.number === phoneNumber);
+        if (index === -1) {
+            reply = false;
+        } else {
+            let updatedChat = this.chatArray.splice(index,1);
+            updatedChat.startingTime = Date.now();
+            this.addChatToArray(updatedChat)
+            reply = true;
+        }
+        return reply;
+    }
+
     updateChatByPhoneNumber(updatedChat) {
         let reply;
         let phoneNumber = updatedChat.number;

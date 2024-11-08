@@ -58,6 +58,7 @@ export default class ReplyService {
             reply = msg.getMessageById(ID_MENSAJE_TIMEOUT);
         }
         else {
+            control.refreshChatTimeout(chat.number);
             let lastMessage = await msg.getMessageById(chat.lastMessage);
             if(lastMessage.replyable){
                 hist.saveChatHistory(chat.number, chat.lastMessage, clientReply);

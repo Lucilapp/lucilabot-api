@@ -27,4 +27,8 @@ export default class ChatService {
         const chat = new Chat(phoneNumber, startingTime, lastMessage);
         ChatStore.addChatToArray(chat);
     }
+
+    refreshChatTimeout = (phoneNumber) => {
+        return ChatStore.refreshChatTimeout(phoneNumber);
+    }
 }
