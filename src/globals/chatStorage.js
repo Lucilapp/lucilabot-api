@@ -39,7 +39,6 @@ class ChatStore {
         } else {
             let updatedChat = this.chatArray.splice(index,1)[0];
             updatedChat.startingTime = Date.now();
-            console.log(updatedChat)
             this.addChatToArray(updatedChat)
             reply = true;
         }

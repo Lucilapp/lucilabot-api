@@ -67,7 +67,6 @@ whatsappClient.on("message", async(msg) =>{
                                     if(lastMessage.saveAnswer) {
                                         switch(parseInt(lastMessage.Id)){
                                             case ID_MENSAJE_INPUT_NOMBRE:
-
                                             if(vali.validarNombre(user.Nombre))
                                             {
                                                 user.Nombre = msg.body;
@@ -75,15 +74,15 @@ whatsappClient.on("message", async(msg) =>{
                                             else
                                             {
                                                 //1 MANDA EL MSG ESTA MAL
-                                                await wppChat.sendMessage(getMessageById(ID_INGRESO_ERROR));
+                                                let msg = await msgsvc.getMessageById(ID_INGRESO_ERROR);
+                                                await wppChat.sendMessage(msg.text);
                                                 //2 ROLLBACK DE MENSAJE
                                                 let history = histsvc.getChatHistory(wppContact.number);
-                                                let optMsg = history[history.length - 2];
-
-                                                await chatsvc.updateChatLastMessage(wppContact.number, optMsg);
+                                                let msgId = history[history.length - 1].messageId;
+                                                console.log(msgId)
+                                                chatsvc.updateChatLastMessage(wppContact.number, msgId);
                                                 //3 REINICIO DEL BOT
                                                 reinicio = true
-                                                bot();
                                             }
 
                                                 break;
@@ -122,7 +121,6 @@ whatsappClient.on("message", async(msg) =>{
                                                 break;
 
                                             case ID_MENSAJE_INPUT_AYUDA_WEB:
-                                                console.log("entro");
                                                 clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
                                                 socket = io(SOCKET_API_IP);
                                                 socket.on("connect", () => {
@@ -140,8 +138,7 @@ whatsappClient.on("message", async(msg) =>{
                                         }
                                     }
                                 }
-                                if(!reinicio)
-                                {
+                                if(!reinicio){
                                     // Fase 3: Mandar el siguiente mensaje
                                     await wppChat.sendMessage(reply.text);
                                     // Fase 4: Actualizar el último mensaje en el chat
@@ -161,7 +158,10 @@ whatsappClient.on("message", async(msg) =>{
                                         chatsvc.removeChatsByPhoneNumber(wppContact.number);
                                     }
                                 }
-                                reinicio = false;
+                                else {
+                                    reinicio = false;
+                                    bot();
+                                }
                             }
                             else if (chatAlreadyConnected) {
                                 if (chatAlreadyConnected){
