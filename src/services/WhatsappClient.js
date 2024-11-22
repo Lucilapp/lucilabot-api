@@ -6,7 +6,7 @@ import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
 import Validation from '../helpers/validation.js'
-import { CatArray, ID_INGRESO_ERROR, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE, ID_MENSAJE_CHAT_TERMINADO_EXITOSO, ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO } from '../config/constants.js';
+import { CatArray, ID_INGRESO_ERROR, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE, ID_MENSAJE_CHAT_TERMINADO_EXITOSO, ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO, ID_CATEGORIA_PAGINAS_WEB, ID_MENSAJE_INPUT_AYUDA_WEB } from '../config/constants.js';
 import AccountService from './account-service.js';
 import HistoryService from './history-service.js';
 import TaskService from './task-service.js';
@@ -97,10 +97,6 @@ whatsappClient.on("message", async(msg) =>{
                                                 user.Telefono = accsvc.formatPhone(msg.from);
                                                 accsvc.createAccount(user);
                                                 break;
-                                            case ID_MENSAJE_INPUT_AYUDA_INICO:
-                                                
-                                                
-                                                break;
                                             // case ID_MENSAJE_INPUT_SOPORTE:
                                             //     clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
                                             //     repsvc.createReport(reply.Id, clientId, msg.body)
@@ -114,6 +110,23 @@ whatsappClient.on("message", async(msg) =>{
                                                 socket = io(SOCKET_API_IP);
                                                 socket.on("connect", () => {
                                                     tasksvc.createTask(msg.body, catId, clientId, socket.id);
+                                                })
+                                                socket.on('recieveMessage', (msg, senderId) => {
+                                                    senderID = senderId;
+                                                    wppChat.sendMessage(msg)
+                                                })
+                                                socket.on('chatDisconnect', () => {
+                                                    chatAlreadyConnected = false;
+                                                    bot();
+                                                }) 
+                                                break;
+
+                                            case ID_MENSAJE_INPUT_AYUDA_WEB:
+                                                console.log("entro");
+                                                clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
+                                                socket = io(SOCKET_API_IP);
+                                                socket.on("connect", () => {
+                                                    tasksvc.createTask(msg.body, ID_CATEGORIA_PAGINAS_WEB, clientId, socket.id);
                                                 })
                                                 socket.on('recieveMessage', (msg, senderId) => {
                                                     senderID = senderId;

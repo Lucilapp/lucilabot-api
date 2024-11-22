@@ -22,38 +22,37 @@ export const ID_MENSAJE_INPUT_NOMBRE = 3;
 export const ID_MENSAJE_INPUT_EDAD = 4;
 export const ID_MENSAJE_INPUT_DNI = 5;
 export const ID_MENSAJE_INPUT_GENERO = 6;
-export const ID_MENSAJE_INPUT_AYUDA_INICO = 11;
 export const ID_MENSAJE_INPUT_AYUDA_APPS = 16;
 export const ID_MENSAJE_INPUT_SOPORTE = 14;
+export const ID_MENSAJE_INPUT_AYUDA_WEB = 11;
 
 //finalizacion msgs
 export const ID_MENSAJE_CHAT_TERMINADO = 21;
 export const ID_MENSAJE_CHAT_TERMINADO_EXITOSO = 22;
 export const ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO = 23;
 
-
-
-//categorias
+//cats
+export const ID_CATEGORIA_PAGINAS_WEB = 21;
 export const CatArray = [
     {
         idMsg: 10,
         answers: [
-            {letter: "A", catId: 1},
-            {letter: "B", catId: 2},
-            {letter: "C", catId: 4},
+            {letter: "A", catId: 2},
+            {letter: "B", catId: 4},
+            {letter: "C", catId: 19},
             {letter: "D", catId: 7},
             {letter: "E", catId: 5},
+            {letter: "F", catId: 8},
+            {letter: "G", catId: 20},
         ]
     },
     {
         idMsg: 17,
         answers: [
-            {letter: "B", catId: 8},
-            {letter: "C", catId: 10},
-            {letter: "D", catId: 11},
-            {letter: "E", catId: 12},
-            {letter: "F", catId: 13},
-            {letter: "G", catId: 17}
+            {letter: "A", catId: 10},
+            {letter: "B", catId: 11},
+            {letter: "C", catId: 12},
+            {letter: "D", catId: 13}
         ]
     }
 ];
