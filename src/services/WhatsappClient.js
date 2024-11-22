@@ -5,7 +5,8 @@ import qrcode from 'qrcode-terminal';
 import ReplyService from './reply-service.js';
 import MessageService from './message-service.js';
 import ChatService from './chat-service.js';
-import { CatArray, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE, ID_MENSAJE_CHAT_TERMINADO_EXITOSO, ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO } from '../config/constants.js';
+import Validation from '../helpers/validation.js'
+import { CatArray, ID_INGRESO_ERROR, ID_MENSAJE_CONEXION_CHAT, ID_MENSAJE_ERROR_INTERNO, ID_MENSAJE_FIN_REGISTRO, ID_MENSAJE_INPUT_AYUDA_APPS, ID_MENSAJE_INPUT_AYUDA_INICO, ID_MENSAJE_INPUT_DNI, ID_MENSAJE_INPUT_EDAD, ID_MENSAJE_INPUT_GENERO, ID_MENSAJE_INPUT_NOMBRE, ID_MENSAJE_RESPUESTA_INVALIDA, ID_MENSAJE_TIMEOUT, SOCKET_API_IP, ID_MENSAJE_INPUT_SOPORTE, ID_MENSAJE_CHAT_TERMINADO_EXITOSO, ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO } from '../config/constants.js';
 import AccountService from './account-service.js';
 import HistoryService from './history-service.js';
 import TaskService from './task-service.js';
@@ -17,6 +18,7 @@ var answering = false;
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
+var reinicio = false;
 var socket = null;
 var senderID = null;
 var clientId = null;
@@ -47,6 +49,7 @@ whatsappClient.on("message", async(msg) =>{
             const histsvc = new HistoryService();
             const tasksvc = new TaskService();
             const repsvc = new ReportService();
+            const vali = new Validation();
             console.log("Conected with:" + wppContact.number)
             if (wppContact.number === '5491149394221' || wppContact.number === '5491126447860' || wppContact.number === '5491153743509'|| wppContact.number === '5491170205952' || wppContact.number === '5491126215005' || wppContact.number === '5491131172583'|| wppContact.number === '5491124609835') {
                 
@@ -64,7 +67,25 @@ whatsappClient.on("message", async(msg) =>{
                                     if(lastMessage.saveAnswer) {
                                         switch(parseInt(lastMessage.Id)){
                                             case ID_MENSAJE_INPUT_NOMBRE:
+
+                                            if(vali.validarNombre(user.Nombre))
+                                            {
                                                 user.Nombre = msg.body;
+                                            }
+                                            else
+                                            {
+                                                //1 MANDA EL MSG ESTA MAL
+                                                await wppChat.sendMessage(getMessageById(ID_INGRESO_ERROR));
+                                                //2 ROLLBACK DE MENSAJE
+                                                let history = histsvc.getChatHistory(wppContact.number);
+                                                let optMsg = history[history.length - 2];
+
+                                                await chatsvc.updateChatLastMessage(wppContact.number, optMsg);
+                                                //3 REINICIO DEL BOT
+                                                reinicio = true
+                                                bot();
+                                            }
+
                                                 break;
                                             case ID_MENSAJE_INPUT_EDAD:
                                                 user.Edad = msg.body;
@@ -106,24 +127,28 @@ whatsappClient.on("message", async(msg) =>{
                                         }
                                     }
                                 }
-                                // Fase 3: Mandar el siguiente mensaje
-                                await wppChat.sendMessage(reply.text);
-                                // Fase 4: Actualizar el último mensaje en el chat
-                                await chatsvc.updateChatLastMessage(wppContact.number, reply.Id);
-                                if(reply.Id.toString() === ID_MENSAJE_CONEXION_CHAT.toString()){
-                                    chatAlreadyConnected = true;
-                                    bot();
+                                if(!reinicio)
+                                {
+                                    // Fase 3: Mandar el siguiente mensaje
+                                    await wppChat.sendMessage(reply.text);
+                                    // Fase 4: Actualizar el último mensaje en el chat
+                                    await chatsvc.updateChatLastMessage(wppContact.number, reply.Id);
+                                    if(reply.Id.toString() === ID_MENSAJE_CONEXION_CHAT.toString()){
+                                        chatAlreadyConnected = true;
+                                        bot();
+                                    }
+                                    else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString() && reply.Id.toString() !== ID_MENSAJE_CHAT_TERMINADO_EXITOSO.toString() && reply.Id !== ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO.toString()){
+                                        bot();
+                                    }
+                                    else if(reply.Id === ID_MENSAJE_ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
+                                        chatsvc.removeChatsByPhoneNumber(wppContact.number);
+                                    }
+                                    else if(reply.Id.toString() === ID_MENSAJE_CHAT_TERMINADO_EXITOSO.toString() || reply.Id === ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO.toString()){
+                                        //momento donde guarda todo el chat
+                                        chatsvc.removeChatsByPhoneNumber(wppContact.number);
+                                    }
                                 }
-                                else if(!reply.replyable && reply.Id !== ID_MENSAJE_ERROR_INTERNO.toString() && reply.Id !== ID_MENSAJE_TIMEOUT.toString() && reply.Id !== ID_MENSAJE_FIN_REGISTRO.toString() && reply.Id.toString() !== ID_MENSAJE_CHAT_TERMINADO_EXITOSO.toString() && reply.Id !== ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO.toString()){
-                                    bot();
-                                }
-                                else if(reply.Id === ID_MENSAJE_ERROR_INTERNO.toString() || reply.Id === ID_MENSAJE_TIMEOUT.toString() || reply.Id === ID_MENSAJE_FIN_REGISTRO.toString()){
-                                    chatsvc.removeChatsByPhoneNumber(wppContact.number);
-                                }
-                                else if(reply.Id.toString() === ID_MENSAJE_CHAT_TERMINADO_EXITOSO.toString() || reply.Id === ID_MENSAJE_CHAT_TERMINADO_NO_EXITOSO.toString()){
-                                    //momento donde guarda todo el chat
-                                    chatsvc.removeChatsByPhoneNumber(wppContact.number);
-                                }
+                                reinicio = false;
                             }
                             else if (chatAlreadyConnected) {
                                 if (chatAlreadyConnected){

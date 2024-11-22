@@ -4,6 +4,7 @@ export const SOCKET_API_IP = "http://localhost:5001/"
 
 //control
 export const CHAT_TIMEOUT_MS = 600000;
+export const ID_INGRESO_ERROR = 24;
 
 //control msgs
 export const ID_MENSAJE_INICIO = 1;
@@ -14,6 +15,7 @@ export const ID_MENSAJE_ERROR_INTERNO = 20;
 export const ID_MENSAJE_RESPUESTA_INVALIDA = 18;
 export const ID_MENSAJE_CONEXION_CHAT = 12;
 export const ID_MENSAJE_INCORRECTO = 18;
+
 
 //input msgs
 export const ID_MENSAJE_INPUT_NOMBRE = 3;
