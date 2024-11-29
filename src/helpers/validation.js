@@ -1,15 +1,15 @@
 export default class ValidationHelper {
-    // Validar un nombre
     validarNombre = (nombre) => {
-        // Expresión regular para validar que el nombre solo contenga letras y espacios
-        const regex = /^[A-Za-z\s]+$/;
+        console.log(nombre)
+        // Expresión regular para validar que el nombre solo contenga letras (mayúsculas o minúsculas) y espacios, y que permita caracteres acentuados
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
     
         // Verificar que el nombre cumpla con la expresión regular
         if (!regex.test(nombre)) {
             return false;
         }
     
-        // Dividir el nombre en palabras
+        // Dividir el nombre en palabras (eliminar espacios extra)
         const palabras = nombre.trim().split(/\s+/);
     
         // Verificar que haya al menos dos palabras
@@ -48,11 +48,14 @@ export default class ValidationHelper {
     
     // Validar el género (solo 'M', 'F' o 'X')
     validarGenero = (genero) => {
-        // Expresión regular para verificar que el género sea solo 'M', 'F', o 'X'
+        // Eliminar espacios al inicio y al final, y convertir a mayúsculas
+        genero = genero.trim().toUpperCase();
+        
+        // Expresión regular para verificar que el género sea solo 'M', 'F' o 'X'
         const regex = /^[MFX]$/;
-    
+        
         // Verificar que el género cumple con la expresión regular
         return regex.test(genero);
-    };
+    };    
 }
 

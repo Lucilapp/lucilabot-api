@@ -18,6 +18,7 @@ var answering = false;
 const whatsappClient = new Client({
     authStrategy: new LocalAuth
 })
+var rerun = false;
 var reinicio = false;
 var socket = null;
 var senderID = null;
@@ -28,6 +29,23 @@ var user = {
     Telefono: 0,
     Edad: 0,
     Genero: ''
+}
+
+const msgInvalido = async (wppChat, wppContact) => {
+    const msgsvc = new MessageService();
+    const histsvc = new HistoryService();
+    const chatsvc = new ChatService();
+
+    //1 MANDA EL MSG ESTA MAL
+    let msg = await msgsvc.getMessageById(ID_INGRESO_ERROR);
+    await wppChat.sendMessage(msg.text);
+    //2 ROLLBACK DE MENSAJE
+    let history = histsvc.getChatHistory(wppContact.number);
+    let msgId = history[history.length - 1].messageId;
+    console.log(msgId);
+    chatsvc.updateChatLastMessage(wppContact.number, (await msgsvc.getPrevMessage(msgId)).Id);
+    //3 REINICIO DEL BOT
+    reinicio = true
 }
 
 whatsappClient.on('qr', (qr) => {
@@ -63,38 +81,43 @@ whatsappClient.on("message", async(msg) =>{
                                 // Fase 1: Verificar si se debe guardar la respuesta
                                 const chat = chatsvc.getChatByPhoneNumber(wppContact.number)[0];
                                 let lastMessage = chat.lastMessage ? await msgsvc.getMessageById(chat.lastMessage) : null; 
-                                if (lastMessage !== null) {
+                                if (lastMessage !== null && !rerun) {
                                     if(lastMessage.saveAnswer) {
                                         switch(parseInt(lastMessage.Id)){
                                             case ID_MENSAJE_INPUT_NOMBRE:
-                                            if(vali.validarNombre(user.Nombre))
-                                            {
-                                                user.Nombre = msg.body;
-                                            }
-                                            else
-                                            {
-                                                //1 MANDA EL MSG ESTA MAL
-                                                let msg = await msgsvc.getMessageById(ID_INGRESO_ERROR);
-                                                await wppChat.sendMessage(msg.text);
-                                                //2 ROLLBACK DE MENSAJE
-                                                let history = histsvc.getChatHistory(wppContact.number);
-                                                let msgId = history[history.length - 1].messageId;
-                                                console.log(msgId)
-                                                chatsvc.updateChatLastMessage(wppContact.number, msgId);
-                                                //3 REINICIO DEL BOT
-                                                reinicio = true
-                                            }
-
-                                                break;
+                                                if(vali.validarNombre(msg.body))
+                                                {
+                                                    user.Nombre = msg.body;
+                                                }
+                                                else
+                                                {
+                                                    await msgInvalido(wppChat, wppContact);
+                                                }
+                                                    break;
                                             case ID_MENSAJE_INPUT_EDAD:
-                                                user.Edad = msg.body;
+                                                if(vali.validarAno(msg.body)){
+                                                    user.Edad = msg.body;
+                                                }
+                                                else {
+                                                    await msgInvalido(wppChat, wppContact);
+                                                }
                                                 break;
                                             case ID_MENSAJE_INPUT_DNI:
+                                                if(vali.validarDNI(msg.body)){
+                                                }
+                                                else{
+                                                    await msgInvalido(wppChat, wppContact);
+                                                }
                                                 break;
                                             case ID_MENSAJE_INPUT_GENERO:
-                                                user.Genero = msg.body;
-                                                user.Telefono = accsvc.formatPhone(msg.from);
-                                                accsvc.createAccount(user);
+                                                if(vali.validarGenero(msg.body)){
+                                                    user.Genero = msg.body;
+                                                    user.Telefono = accsvc.formatPhone(msg.from);
+                                                    accsvc.createAccount(user);
+                                                }
+                                                else{
+                                                    await msgInvalido(wppChat, wppContact);
+                                                }
                                                 break;
                                             // case ID_MENSAJE_INPUT_SOPORTE:
                                             //     clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
@@ -138,6 +161,7 @@ whatsappClient.on("message", async(msg) =>{
                                         }
                                     }
                                 }
+                                rerun = false;
                                 if(!reinicio){
                                     // Fase 3: Mandar el siguiente mensaje
                                     await wppChat.sendMessage(reply.text);
@@ -160,6 +184,7 @@ whatsappClient.on("message", async(msg) =>{
                                 }
                                 else {
                                     reinicio = false;
+                                    rerun = true;
                                     bot();
                                 }
                             }

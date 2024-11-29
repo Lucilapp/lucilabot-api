@@ -19,6 +19,13 @@ export default class MessageService {
         return reply;
     }
 
+    getPrevMessage = async (lastMessageID) => {
+        const repo = new MessageRepository();
+        const message = await repo.getPrevMessage(lastMessageID);
+        const reply = await this.mountMessage(message);
+        return reply;
+    }
+
     getNextMessageByOption = async (lastMessageID, option) => {
         const repo = new MessageRepository();
         const message = await repo.getNextMessageByOption(lastMessageID, option);
