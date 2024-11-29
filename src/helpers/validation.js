@@ -1,6 +1,5 @@
 export default class ValidationHelper {
     validarNombre = (nombre) => {
-        console.log(nombre)
         // Expresión regular para validar que el nombre solo contenga letras (mayúsculas o minúsculas) y espacios, y que permita caracteres acentuados
         const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
     
@@ -55,6 +54,30 @@ export default class ValidationHelper {
         const regex = /^[MFX]$/;
         
         // Verificar que el género cumple con la expresión regular
+        return regex.test(genero);
+    };
+
+    //Validar el ingreso 
+    validarRespuesta = (input) => {
+        // Eliminar espacios al inicio y al final, y convertir a mayúsculas
+        input = input.trim().toUpperCase();
+        
+        // Expresión regular para verificar que el ingreso sea solo 'A', 'B', 'C' O 'D'
+        const regex = /^[ABCD]$/;
+        
+        // Verificar que el ingreso cumple con la expresión regular
+        return regex.test(genero);
+    };    
+
+
+    validarRespuesta = (input) => {
+        // Eliminar espacios al inicio y al final, y convertir a mayúsculas
+        input = input.trim().toUpperCase();
+        
+        // Expresión regular para verificar que el ingreso sea solo 'A', 'B', 'C', 'D', 'E' O 'F'
+        const regex = /^[ABCDEF]$/;
+        
+        // Verificar que el ingreso cumple con la expresión regular
         return regex.test(genero);
     };    
 }

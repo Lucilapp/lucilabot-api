@@ -66,12 +66,9 @@ export default class ReplyService {
                     reply = await msg.getNextMessage(lastMessage.Id);
                 }
                 else{
+                    console.log(clientReply)
                     let opt = clientReply.toUpperCase();
                     reply = await msg.getNextMessageByOption(lastMessage.Id, opt);
-                }
-                
-                if(reply === null){
-                    //Decir que debe responder de nuevo
                 }
             }
             else{

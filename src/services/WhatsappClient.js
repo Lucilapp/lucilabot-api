@@ -42,8 +42,10 @@ const msgInvalido = async (wppChat, wppContact) => {
     //2 ROLLBACK DE MENSAJE
     let history = histsvc.getChatHistory(wppContact.number);
     let msgId = history[history.length - 1].messageId;
-    console.log(msgId);
     chatsvc.updateChatLastMessage(wppContact.number, (await msgsvc.getPrevMessage(msgId)).Id);
+    if(history.length > 1){
+        histsvc.saveChatHistory(wppContact.number, history[history.length - 2].messageId, history[history.length - 2].reply);
+    }
     //3 REINICIO DEL BOT
     reinicio = true
 }
@@ -77,7 +79,6 @@ whatsappClient.on("message", async(msg) =>{
                             if(!chatAlreadyConnected){
                                 // Fase 2: Decidir el siguiente mensaje
                                 let reply = await replysvc.checkChat(wppContact.number, msg.body);
-                                
                                 // Fase 1: Verificar si se debe guardar la respuesta
                                 const chat = chatsvc.getChatByPhoneNumber(wppContact.number)[0];
                                 let lastMessage = chat.lastMessage ? await msgsvc.getMessageById(chat.lastMessage) : null; 
@@ -142,7 +143,6 @@ whatsappClient.on("message", async(msg) =>{
                                                     bot();
                                                 }) 
                                                 break;
-
                                             case ID_MENSAJE_INPUT_AYUDA_WEB:
                                                 clientId = (await accsvc.getAccounts(wppContact.number))[0].Id;
                                                 socket = io(SOCKET_API_IP);
@@ -159,6 +159,12 @@ whatsappClient.on("message", async(msg) =>{
                                                 }) 
                                                 break;
                                         }
+                                    
+                                    }
+                                    if(lastMessage.replyable && !reply){
+                                        await msgInvalido(wppChat, wppContact);
+                                        let history = histsvc.getChatHistory(wppContact.number);
+                                        msg.body = history[history.length - 1].reply;
                                     }
                                 }
                                 rerun = false;

@@ -34,7 +34,7 @@ export default class MessageService {
             reply = this.mountMessage(message);
         }
         else{
-            reply = await repo.getMessageByID(ID_MENSAJE_RESPUESTA_INVALIDA);
+            reply = false;
         }
         return reply;
     }

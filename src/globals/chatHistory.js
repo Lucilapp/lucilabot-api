@@ -34,10 +34,18 @@ class ChatHistory {
 
     updateChatHistory(phoneNumber, messageId, reply) {
         let historyIndex = this.chatHistoryArray.findIndex(obj => obj.phoneNumber === phoneNumber);
-        this.chatHistoryArray[historyIndex].messages.push({
+        if(reply.match(/[a-z]/i))  
+        {
+            this.chatHistoryArray[historyIndex].messages.push({
             messageId: messageId,
             reply: reply.toUpperCase()
-        })
+        })}
+        else {
+            this.chatHistoryArray[historyIndex].messages.push({
+                messageId: messageId,
+                reply: reply,
+            })
+        }
     }
 
     getReplyToMessageId(phoneNumber, messageId) {
